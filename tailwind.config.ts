@@ -1,18 +1,25 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
+  darkMode: ["class"],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "rgb(59, 130, 246)",
+        "primary-foreground": "rgb(255, 255, 255)",
+      },
+      gridTemplateColumns: {
+        "14": "repeat(14, minmax(0, 1fr))",
       },
     },
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [require("tailwindcss-animate")],
+}
+
+export default config;
