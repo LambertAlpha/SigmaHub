@@ -18,7 +18,7 @@ export default function Page() {
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-T8AyMxpAts1PjfATLcI2XleH9uq7qG.png"
                   alt="Profile avatar"
-                  className="w-32 h-32 rounded-full"
+                  className="w-[32rem] aspect-square rounded-full" // 使用 aspect-square 确保宽高比 1:1 呈现完美圆形
                 />
               </div>
               <h1 className="text-2xl font-bold">WestOn Guo</h1>

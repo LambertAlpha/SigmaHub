@@ -5,8 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
 import { useState } from "react"
+import { PracticeView } from "../components/practice-view"
+import { SummaryView } from "../components/summary-view"
+import { AskAIView } from "../components/ask-ai-view"
+
+type View = "practice" | "summary" | "askAi"
 
 export default function CoursePage() {
+  const [currentView, setCurrentView] = useState<View>("practice")
   const [isDragging, setIsDragging] = useState(false)
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -37,12 +43,26 @@ export default function CoursePage() {
                 <ArrowLeft className="h-6 w-6" />
               </Button>
             </Link>
-            <h1 className="text-xl font-semibold">Course Name: Default</h1>
+            <h1 className="text-xl font-semibold">
+              Course Name: <span className="text-blue-500">Sociology 101</span>
+            </h1>
           </div>
           <div className="flex gap-2">
-            <Button className="bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-full px-6 py-2">Practice</Button>
-            <Button className="bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-full px-6 py-2">Summary</Button>
-            <Button className="bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-full px-6 py-2">Ask AI</Button>
+            <Button
+              variant={currentView === "practice" ? "default" : "secondary"}
+              onClick={() => setCurrentView("practice")}
+            >
+              Practice
+            </Button>
+            <Button
+              variant={currentView === "summary" ? "default" : "secondary"}
+              onClick={() => setCurrentView("summary")}
+            >
+              Summary
+            </Button>
+            <Button variant={currentView === "askAi" ? "default" : "secondary"} onClick={() => setCurrentView("askAi")}>
+              Ask AI
+            </Button>
           </div>
         </div>
       </div>
@@ -72,6 +92,13 @@ export default function CoursePage() {
 
           {/* Notes Area */}
           <Textarea placeholder="Type your notes here..." className="min-h-[200px] bg-gray-800 border-gray-700" />
+        </div>
+
+        {/* Right Panel */}
+        <div className="bg-gray-800 rounded-lg">
+          {currentView === "practice" && <PracticeView />}
+          {currentView === "summary" && <SummaryView />}
+          {currentView === "askAi" && <AskAIView />}
         </div>
       </div>
     </div>
