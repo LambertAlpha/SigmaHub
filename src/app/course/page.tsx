@@ -40,9 +40,9 @@ export default function CoursePage() {
             <h1 className="text-xl font-semibold">Course Name: Default</h1>
           </div>
           <div className="flex gap-2">
-            <Button variant="default">Practice</Button>
-            <Button variant="default">Summary</Button>
-            <Button variant="default">Ask AI</Button>
+            <Button className="bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-full px-6 py-2">Practice</Button>
+            <Button className="bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-full px-6 py-2">Summary</Button>
+            <Button className="bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-full px-6 py-2">Ask AI</Button>
           </div>
         </div>
       </div>
