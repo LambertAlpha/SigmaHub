@@ -13,7 +13,7 @@ export default function ActivityHeatmap() {
       .map(() =>
         Array(14)
           .fill(0)
-          .map(() => Math.random() > 0.5),
+          .map(() => false),
       )
     setHeatmapData(data)
   }, [])
