@@ -40,32 +40,37 @@ export function AskAIView() {
     }, 1000)
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSend()
+    }
+  }
+
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-semibold mb-4">Ask AI</h2>
-      <div className="flex h-full flex-col">
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
-          {messages.map((message) => (
-            <div key={message.id} className={`flex ${message.isAi ? "justify-start" : "justify-end"}`}>
-              <div
-                className={`rounded-lg px-4 py-2 ${message.isAi ? "bg-gray-800 text-white" : "bg-blue-600 text-white"}`}
-              >
-                {message.text}
-              </div>
+    <div className="flex h-full flex-col">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+        {messages.map((message) => (
+          <div key={message.id} className={`flex ${message.isAi ? "justify-start" : "justify-end"}`}>
+            <div
+              className={`rounded-lg px-4 py-2 max-w-[80%] ${
+                message.isAi ? "bg-gray-700 text-gray-100" : "bg-blue-600 text-white"
+              }`}
+            >
+              {message.text}
             </div>
-          ))}
-        </div>
-        <div className="border-t border-gray-800 p-4">
-          <div className="flex gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask Anything Here"
-              className="flex-1 bg-gray-800"
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
-            />
-            <Button onClick={handleSend}>Send</Button>
           </div>
+        ))}
+      </div>
+      <div className="border-t border-gray-700 p-4">
+        <div className="flex gap-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Ask anything here..."
+            className="flex-1"
+          />
+          <Button onClick={handleSend}>Send</Button>
         </div>
       </div>
     </div>

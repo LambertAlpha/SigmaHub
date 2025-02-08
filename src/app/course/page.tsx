@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { Textarea } from "../../components/ui/textarea"
 import Link from "next/link"
 import { useState } from "react"
 import { PracticeView } from "../components/practice-view"
@@ -44,7 +44,7 @@ export default function CoursePage() {
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">
-              Course Name: <span className="text-blue-500">Sociology 101</span>
+              Course Name: <span className="text-blue-500">Default</span>
             </h1>
           </div>
           <div className="flex gap-2">

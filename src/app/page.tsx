@@ -16,7 +16,7 @@ export default function Page() {
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
                 <img
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-T8AyMxpAts1PjfATLcI2XleH9uq7qG.png"
+                  src="./././avatar.jpg"
                   alt="Profile avatar"
                   className="w-[32rem] aspect-square rounded-full" // 使用 aspect-square 确保宽高比 1:1 呈现完美圆形
                 />
@@ -43,21 +43,28 @@ export default function Page() {
                 <CourseList items={["Interactive Proofs and the Sum-Check Protocol"]} />
               </Card>
             </div>
-
             <div className="space-y-2">
               <h3 className="text-sm text-gray-400">Last Month</h3>
-              <Card className="bg-gray-800">
-                <CourseList
-                  items={[
-                    "Basic Macroeconomic Concepts",
-                    "Large Bipartite Subgraph",
-                    "Introduction to Superposition",
-                    "Operators and the Schrödinger Equation",
-                    "MIT Introduction to Deep Learning",
-                    "MIT Calculus 101",
-                  ]}
-                />
-              </Card>
+              <div className="space-y-2">
+                <Card className="bg-gray-800 hover:bg-gray-700 transition-colors">
+                  <CourseList items={["Basic Macroeconomic Concepts"]} />
+                </Card>
+                <Card className="bg-gray-800 hover:bg-gray-700 transition-colors">
+                  <CourseList items={["Large Bipartite Subgraph"]} />
+                </Card>
+                <Card className="bg-gray-800 hover:bg-gray-700 transition-colors">
+                  <CourseList items={["Introduction to Superposition"]} />
+                </Card>
+                <Card className="bg-gray-800 hover:bg-gray-700 transition-colors">
+                  <CourseList items={["Operators and the Schrödinger Equation"]} />
+                </Card>
+                <Card className="bg-gray-800 hover:bg-gray-700 transition-colors">
+                  <CourseList items={["MIT Introduction to Deep Learning"]} />
+                </Card>
+                <Card className="bg-gray-800 hover:bg-gray-700 transition-colors">
+                  <CourseList items={["MIT Calculus 101"]} />
+                </Card>
+              </div>
             </div>
           </div>
         </div>
