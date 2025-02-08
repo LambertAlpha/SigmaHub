@@ -1,43 +1,102 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { createChatConnection, sendMessage } from '@/api/chat'
 
 interface Message {
   id: number
   text: string
   isAi: boolean
+  timestamp?: number
 }
 
 export function AskAIView() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "OK! Let me think about the blablablablabla",
-      isAi: true,
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
+  const [ws, setWs] = useState<WebSocket | null>(null)
+  const [isConnecting, setIsConnecting] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let wsConnection: WebSocket | null = null
+    
+    try {
+      setIsConnecting(true)
+      wsConnection = createChatConnection()
+      
+      wsConnection.onopen = () => {
+        setIsConnecting(false)
+        setMessages([{
+          id: 1,
+          text: "Connected! How can I help you?",
+          isAi: true,
+          timestamp: Date.now()
+        }])
+      }
+
+      wsConnection.onmessage = (event: MessageEvent) => {
+        try {
+          const message = JSON.parse(event.data)
+          setMessages(prev => [...prev, {
+            id: prev.length + 1,
+            text: message.text,
+            isAi: true,
+            timestamp: message.timestamp || Date.now()
+          }])
+        } catch (err) {
+          console.error('Error parsing message:', err)
+          setError('Failed to parse message from server')
+        }
+      }
+
+      wsConnection.onerror = (event) => {
+        console.error('WebSocket error:', event)
+        setError('Connection error occurred')
+        setIsConnecting(false)
+      }
+
+      wsConnection.onclose = () => {
+        setError('Connection closed')
+        setIsConnecting(false)
+      }
+
+      setWs(wsConnection)
+    } catch (err) {
+      console.error('Failed to create WebSocket connection:', err)
+      setError('Failed to establish connection')
+      setIsConnecting(false)
+    }
+
+    return () => {
+      if (wsConnection) {
+        wsConnection.close()
+      }
+    }
+  }, [])
 
   const handleSend = () => {
-    if (!input.trim()) return
+    if (!input.trim() || !ws || ws.readyState !== WebSocket.OPEN) {
+      setError('Cannot send message: connection not available')
+      return
+    }
 
-    // Add user message
-    setMessages((prev) => [...prev, { id: prev.length + 1, text: input, isAi: false }])
-    setInput("")
+    setMessages(prev => [...prev, {
+      id: prev.length + 1,
+      text: input,
+      isAi: false,
+      timestamp: Date.now()
+    }])
 
-    // Simulate AI response
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          text: "This is a simulated AI response. In a real application, this would come from an AI model.",
-          isAi: true,
-        },
-      ])
-    }, 1000)
+    try {
+      sendMessage(ws, input)
+      setInput("")
+      setError(null)
+    } catch (err) {
+      console.error('Failed to send message:', err)
+      setError('Failed to send message')
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -46,8 +105,21 @@ export function AskAIView() {
     }
   }
 
+  if (isConnecting) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-gray-400">Connecting...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-full flex-col">
+      {error && (
+        <div className="bg-red-500/10 text-red-400 px-4 py-2 text-sm">
+          {error}
+        </div>
+      )}
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.map((message) => (
           <div key={message.id} className={`flex ${message.isAi ? "justify-start" : "justify-end"}`}>
@@ -69,8 +141,14 @@ export function AskAIView() {
             onKeyPress={handleKeyPress}
             placeholder="Ask anything here..."
             className="flex-1"
+            disabled={!ws || ws.readyState !== WebSocket.OPEN}
           />
-          <Button onClick={handleSend}>Send</Button>
+          <Button 
+            onClick={handleSend}
+            disabled={!ws || ws.readyState !== WebSocket.OPEN}
+          >
+            Send
+          </Button>
         </div>
       </div>
     </div>

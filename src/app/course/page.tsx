@@ -8,12 +8,16 @@ import { useState } from "react"
 import { PracticeView } from "../components/practice-view"
 import { SummaryView } from "../components/summary-view"
 import { AskAIView } from "../components/ask-ai-view"
+import { uploadVideo, uploadVideoFile } from "@/api/index"
 
 type View = "practice" | "summary" | "askAi"
 
 export default function CoursePage() {
   const [currentView, setCurrentView] = useState<View>("practice")
   const [isDragging, setIsDragging] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [timestamp, setTimestamp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -24,12 +28,30 @@ export default function CoursePage() {
     setIsDragging(false)
   }
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
-    // Handle file drop here
+    
     const files = e.dataTransfer.files
-    console.log("Dropped files:", files)
+    if (files.length === 0) return
+    
+    const file = files[0]
+    if (!file.type.startsWith('video/')) {
+      setError('Please upload a video file')
+      return
+    }
+
+    try {
+      setIsUploading(true)
+      setError(null)
+      const response = await uploadVideoFile(file)
+      setTimestamp(response.data.timestamp)
+    } catch (err) {
+      setError('Failed to upload video')
+      console.error(err)
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   return (
@@ -77,18 +99,37 @@ export default function CoursePage() {
               flex flex-col items-center justify-center
               min-h-[400px] transition-colors
               ${isDragging ? "border-blue-500 bg-blue-500/10" : "border-gray-700"}
+              ${isUploading ? "opacity-50" : ""}
             `}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <div className="w-16 h-16 mb-4">
-              <svg className="w-full h-full text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
-            <p className="text-lg text-gray-400">Drag Your File Here</p>
+            {isUploading ? (
+              <div className="text-gray-400">Uploading...</div>
+            ) : (
+              <>
+                <div className="w-16 h-16 mb-4">
+                  <svg className="w-full h-full text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <p className="text-lg text-gray-400">Drag Your Video File Here</p>
+              </>
+            )}
           </div>
+
+          {error && (
+            <div className="bg-red-500/10 text-red-400 px-4 py-2 rounded">
+              {error}
+            </div>
+          )}
+
+          {timestamp && (
+            <div className="bg-green-500/10 text-green-400 px-4 py-2 rounded">
+              Video uploaded successfully!
+            </div>
+          )}
 
           {/* Notes Area */}
           <Textarea placeholder="Type your notes here..." className="min-h-[200px] bg-gray-800 border-gray-700" />
@@ -96,8 +137,8 @@ export default function CoursePage() {
 
         {/* Right Panel */}
         <div className="bg-gray-800 rounded-lg">
-          {currentView === "practice" && <PracticeView />}
-          {currentView === "summary" && <SummaryView />}
+          {currentView === "practice" && <PracticeView timestamp={timestamp} />}
+          {currentView === "summary" && <SummaryView timestamp={timestamp} />}
           {currentView === "askAi" && <AskAIView />}
         </div>
       </div>

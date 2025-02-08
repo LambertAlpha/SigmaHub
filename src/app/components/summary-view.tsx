@@ -1,45 +1,90 @@
-interface Keyword {
-    text: string
-  }
-  
-  export function SummaryView() {
-    const keywords: Keyword[] = [{ text: "Society" }, { text: "Business" }, { text: "Pioneer" }]
-  
+"use client"
+
+import { useEffect, useState } from "react"
+import { getSummary } from "@/api/index"
+
+interface Summary {
+  keywords: string[]
+  summary: string
+}
+
+interface SummaryViewProps {
+  timestamp: string | null
+}
+
+export function SummaryView({ timestamp }: SummaryViewProps) {
+  const [summary, setSummary] = useState<Summary | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchSummary() {
+      if (!timestamp) return
+
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await getSummary(timestamp, timestamp)
+        setSummary(data.data)
+      } catch (err) {
+        setError('Failed to load summary')
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSummary()
+  }, [timestamp])
+
+  if (!timestamp) {
     return (
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-4">Summary</h2>
-        <div className="space-y-6">
-          <div>
-            <h3 className="mb-3 text-sm text-gray-400">Keywords in the video:</h3>
-            <div className="flex flex-wrap gap-2">
-              {keywords.map((keyword) => (
-                <span key={keyword.text} className="rounded-full bg-gray-700 px-3 py-1 text-sm">
-                  {keyword.text}
-                </span>
-              ))}
-            </div>
-          </div>
-  
-          <div>
-            <h3 className="mb-3 text-sm text-gray-400">Summary:</h3>
-            <div className="space-y-4 text-sm">
-              <p>
-                Pioneer is my team name. Pioneer is also a research program that designed for high school international
-                student to develop their research and academic skills, but to be honest, it's a program that help
-                international student to get into a better college.
-              </p>
-              <ul className="list-disc space-y-2 pl-5">
-                <li>Pioneer is my team name</li>
-                <li>
-                  Pioneer is also a research program that designed for high school international student to develop their
-                  research and academic skills
-                </li>
-                <li>better, in the context, means higher US News rank</li>
-              </ul>
-              <button className="rounded bg-gray-700 px-3 py-1 text-sm hover:bg-gray-600">Go to 10:23</button>
-            </div>
-          </div>
-        </div>
+      <div className="p-4 text-gray-400">
+        Upload a video to see summary
       </div>
     )
-  }  
+  }
+
+  if (loading) {
+    return (
+      <div className="p-4 text-gray-400">
+        Loading summary...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-400">
+        {error}
+      </div>
+    )
+  }
+
+  if (!summary) return null
+
+  return (
+    <div className="p-4">
+      <h2 className="text-lg font-semibold mb-4">Summary</h2>
+      <div className="space-y-6">
+        <div>
+          <h3 className="mb-3 text-sm text-gray-400">Keywords:</h3>
+          <div className="flex flex-wrap gap-2">
+            {summary.keywords.map((keyword) => (
+              <span key={keyword} className="rounded-full bg-gray-700 px-3 py-1 text-sm">
+                {keyword}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm text-gray-400">Summary:</h3>
+          <p className="text-sm text-gray-100">
+            {summary.summary}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}  
