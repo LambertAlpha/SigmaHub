@@ -8,7 +8,7 @@ interface WebSocketMessage {
 }
 
 // 使用后端提供的 WebSocket 地址
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://0.0.0.0:34567/v1/streamChat'
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://45.207.211.184:34567/v1/streamChat'
 
 export function createChatConnection(): WebSocket {
   const ws = new WebSocket(WS_URL)
