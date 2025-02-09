@@ -7,10 +7,20 @@ interface Question {
   question: string;
   options?: string[];  // 选择题才有选项
   answer: string;
+  type: 'multiple_choice' | 'fill_in_the_blank';
   time_range: {
     start_time: number;
     end_time: number;
   };
+}
+
+interface QuestionData {
+  problem_info: {
+    exercises: {
+      multiple_choice: Array<Omit<Question, 'type'>>;
+      fill_in_the_blanks: Array<Omit<Question, 'type'>>;
+    }
+  }
 }
 
 interface PracticeViewProps {
@@ -29,17 +39,17 @@ export function PracticeView({ timestamp }: PracticeViewProps) {
       try {
         setLoading(true)
         setError(null)
-        const response = await getQuestions(timestamp.toString())
+        const response = (await getQuestions(timestamp.toString())) as unknown as QuestionData
         
         if (response?.problem_info?.exercises) {
           const { multiple_choice = [], fill_in_the_blanks = [] } = response.problem_info.exercises;
           
           const allQuestions = [
-            ...multiple_choice.map(q => ({
+            ...multiple_choice.map((q: Omit<Question, 'type'>) => ({
               ...q,
               type: 'multiple_choice' as const
             })),
-            ...fill_in_the_blanks.map(q => ({
+            ...fill_in_the_blanks.map((q: Omit<Question, 'type'>) => ({
               ...q,
               type: 'fill_in_the_blank' as const
             }))
@@ -87,35 +97,37 @@ export function PracticeView({ timestamp }: PracticeViewProps) {
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">练习题</h2>
-      {questions.map((question, index) => (
-        <div key={index} className="mb-6 p-4 bg-gray-800 rounded-lg">
-          <p className="mb-2">{question.question}</p>
-          {question.type === 'multiple_choice' && (
-            <div className="space-y-2">
-              {question.options?.map((option, optIndex) => (
-                <div key={optIndex} className="flex items-center">
-                  <input
-                    type="radio"
-                    name={`question-${index}`}
-                    id={`q${index}-opt${optIndex}`}
-                    className="mr-2"
-                  />
-                  <label htmlFor={`q${index}-opt${optIndex}`}>{option}</label>
-                </div>
-              ))}
-            </div>
-          )}
-          {question.type === 'fill_in_the_blank' && (
-            <input
-              type="text"
-              className="mt-2 w-full p-2 bg-gray-700 rounded"
-              placeholder="请输入答案"
-            />
-          )}
-        </div>
-      ))}
+    <div className="h-[calc(100vh-16rem)] overflow-y-auto">
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4">练习题</h2>
+        {questions.map((question, index) => (
+          <div key={index} className="mb-6 p-4 bg-gray-800 rounded-lg">
+            <p className="mb-2">{question.question}</p>
+            {question.type === 'multiple_choice' && (
+              <div className="space-y-2">
+                {question.options?.map((option, optIndex) => (
+                  <div key={optIndex} className="flex items-center">
+                    <input
+                      type="radio"
+                      name={`question-${index}`}
+                      id={`q${index}-opt${optIndex}`}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`q${index}-opt${optIndex}`}>{option}</label>
+                  </div>
+                ))}
+              </div>
+            )}
+            {question.type === 'fill_in_the_blank' && (
+              <input
+                type="text"
+                className="mt-2 w-full p-2 bg-gray-700 rounded"
+                placeholder="请输入答案"
+              />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

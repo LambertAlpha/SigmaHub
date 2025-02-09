@@ -1,4 +1,6 @@
 // 首页
+"use client"
+
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -8,7 +10,7 @@ import Link from "next/link"
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-6">
+    <div suppressHydrationWarning className="min-h-screen bg-gray-900 text-gray-100 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
           {/* Left Column - Profile Section */}

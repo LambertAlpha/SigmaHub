@@ -1,4 +1,6 @@
 // 首页课程列表
+"use client"
+
 import { ChevronRight } from "lucide-react"
 
 interface CourseListProps {

@@ -79,7 +79,7 @@ export default function CoursePage() {
   console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250208163707");
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div suppressHydrationWarning className="min-h-screen bg-gray-900 text-gray-100">
       {/* Header */}
       <div className="p-4 border-b border-gray-800">
         <div className="max-w-6xl mx-auto flex justify-between items-center">

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { getSummary } from "@/api/index"
 
 interface Summary {
-  keywords: string[]
-  summary: string
+  chapters: any[]
+  summary: any
 }
 
 interface SummaryViewProps {
@@ -55,7 +55,10 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
         setChapters(response.summary_info.chapters);
         console.log('章节数据已设置，长度:', response.summary_info.chapters.length);
 
-        setSummary(response.summary_info)
+        setSummary({
+          chapters: response.summary_info.chapters,
+          summary: response.summary_info
+        })
       } catch (err) {
         console.error('获取摘要数据失败:', err);
         setError(err instanceof Error ? err.message : 'Failed to load summary');
@@ -89,7 +92,6 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
       </div>
     )
   }
-
   if (error) {
     return (
       <div className="p-4 text-red-400">
@@ -111,7 +113,7 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
       )}
 
       {!loading && !error && chapters.length > 0 && (
-        <>
+        <div className="h-[calc(100vh-16rem)] overflow-y-auto">
           {/* Keywords Section */}
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">Keywords in the video:</h2>
@@ -145,7 +147,7 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
               ))}
             </div>
           </div>
-        </>
+        </div>
       )}
 
       {!loading && !error && chapters.length === 0 && (
