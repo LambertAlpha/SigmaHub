@@ -9,7 +9,7 @@ interface Message {
   id: number
   text: string
   isAi: boolean
-  timestamp?: number
+  timestamp?: 20250208163707
 }
 
 export function AskAIView() {
@@ -18,6 +18,7 @@ export function AskAIView() {
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [isConnecting, setIsConnecting] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [timestamp, setTimestamp] = useState<number | null>(null)
 
   useEffect(() => {
     let wsConnection: WebSocket | null = null
@@ -37,18 +38,27 @@ export function AskAIView() {
       }
 
       wsConnection.onmessage = (event: MessageEvent) => {
-        try {
-          const message = JSON.parse(event.data)
-          setMessages(prev => [...prev, {
+        const text = event.data
+        setMessages(prev => {
+          const lastMessage = prev[prev.length - 1]
+          
+          if (lastMessage && lastMessage.isAi) {
+            return [
+              ...prev.slice(0, -1),
+              {
+                ...lastMessage,
+                text: lastMessage.text + text
+              }
+            ]
+          }
+          
+          return [...prev, {
             id: prev.length + 1,
-            text: message.text,
+            text: text,
             isAi: true,
-            timestamp: message.timestamp || Date.now()
-          }])
-        } catch (err) {
-          console.error('Error parsing message:', err)
-          setError('Failed to parse message from server')
-        }
+            timestamp: timestamp || Date.now()
+          }]
+        })
       }
 
       wsConnection.onerror = (event) => {
@@ -74,7 +84,7 @@ export function AskAIView() {
         wsConnection.close()
       }
     }
-  }, [])
+  }, [timestamp])
 
   const handleSend = () => {
     if (!input.trim() || !ws || ws.readyState !== WebSocket.OPEN) {

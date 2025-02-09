@@ -3,32 +3,44 @@
 
 import { useEffect, useState } from "react"
 
+interface ActivityData {
+  active: boolean
+  date: string
+}
+
 export default function ActivityHeatmap() {
-  const [heatmapData, setHeatmapData] = useState<boolean[][]>([])
+  const [heatmapData, setHeatmapData] = useState<ActivityData[]>([])
 
   useEffect(() => {
-    // Generate sample heatmap data (7 rows x 14 columns)
-    const data = Array(7)
-      .fill(0)
-      .map(() =>
-        Array(14)
-          .fill(0)
-          .map(() => false),
-      )
-    setHeatmapData(data)
+    // 生成固定的数据而不是随机数据
+    const generateInitialData = () => {
+      const data: ActivityData[] = []
+      const today = new Date()
+      
+      for (let i = 0; i < 98; i++) {
+        const date = new Date(today)
+        date.setDate(today.getDate() - i)
+        data.push({
+          active: i % 3 === 0, // 使用固定的模式而不是随机值
+          date: date.toISOString().split('T')[0]
+        })
+      }
+      
+      setHeatmapData(data)
+    }
+
+    generateInitialData()
   }, [])
 
   return (
     <div className="w-full max-w-md">
       <div className="text-sm text-gray-400 mb-2">accumulated learning result</div>
       <div className="grid grid-cols-14 gap-1">
-        {Array.from({ length: 98 }).map((_, i) => (
+        {heatmapData.map((item, i) => (
           <div
             key={i}
             className={`w-4 h-4 rounded-sm ${
-              Math.random() > 0.7 
-                ? 'bg-blue-500/50' 
-                : 'bg-gray-700/50'
+              item.active ? 'bg-blue-500/50' : 'bg-gray-700/50'
             }`}
           />
         ))}

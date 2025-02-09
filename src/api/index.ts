@@ -62,8 +62,11 @@ interface SummaryParams {
   bodyPrefix: string;
 }
 
-// 上传视频接口
-export const uploadVideo = async (url: string): Promise<ApiResponse> => {
+// 1. 上传视频接口
+interface UploadVideoData {
+  timestamp: string;
+}
+export const uploadVideo = async (url: string): Promise<ApiResponse<UploadVideoData>> => {
   const params: UploadVideoParams = { url };
   return request({
     url: '/v1/video/push',
@@ -72,8 +75,18 @@ export const uploadVideo = async (url: string): Promise<ApiResponse> => {
   });
 };
 
-// 获取问题接口
-export const getQuestions = async (prefix: string): Promise<ApiResponse> => {
+// 2. 获取问题接口
+interface QuestionData {
+  questions: Array<{
+    id: number;
+    question: string;
+    options: Array<{
+      label: string;
+      text: string;
+    }>;
+  }>;
+}
+export const getQuestions = async (prefix: string): Promise<ApiResponse<QuestionData>> => {
   const params: QuestionParams = { prefix };
   return request({
     url: '/v1/video/question',
@@ -82,24 +95,41 @@ export const getQuestions = async (prefix: string): Promise<ApiResponse> => {
   });
 };
 
+// Summary 接口的数据类型定义
+interface Chapter {
+  title: string;
+  start_time: number;
+  end_time: number;
+  summary: string;
+  keywords: string[];
+}
+
+interface SummaryData {
+  basic_resp: {
+    msg: string;
+  };
+  summary_info: {
+    chapters: Chapter[];
+  };
+}
+
 // 获取总结接口
-export const getSummary = async (
-  queryPrefix: string, 
-  bodyPrefix: string
-): Promise<ApiResponse> => {
+export const getSummary = async (prefix: string): Promise<SummaryData> => {
   return request({
     url: '/v1/video/summary',
     method: 'POST',
-    params: { prefix: queryPrefix },
-    data: { prefix: bodyPrefix }
+    data: { prefix }
   });
 };
 
-// 上传视频文件接口
-export const uploadVideoFile = async (file: File): Promise<ApiResponse> => {
+// 4. 上传视频文件接口
+interface UploadFileData {
+  timestamp: string;
+  // 可能还有其他字段
+}
+export const uploadVideoFile = async (file: File): Promise<ApiResponse<UploadFileData>> => {
   const formData = new FormData();
   formData.append('file', file);
-
   return request({
     url: '/v1/video/raw',
     method: 'POST',
