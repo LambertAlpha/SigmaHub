@@ -44,11 +44,8 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({})
-  const [answerResults, setAnswerResults] = useState<{[key: number]: boolean}>({})
   const [questionLocked, setQuestionLocked] = useState<{[key: number]: boolean}>({})  // 新增：记录题目是否已锁定
   const [showExplanation, setShowExplanation] = useState<{[key: number]: boolean}>({})  // 新增：控制解释框的显示
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   
   // 为每个问题生成一个打乱的选项数组
   const [shuffledOptions, setShuffledOptions] = useState<string[][]>([])
@@ -112,10 +109,6 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
     }))
 
     const isCorrect = option === questions[questionIndex].answer
-    setAnswerResults(prev => ({
-      ...prev,
-      [questionIndex]: isCorrect
-    }))
     setQuestionLocked(prev => ({
       ...prev,
       [questionIndex]: true
@@ -132,7 +125,7 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
 
   const handleAskAI = (question: string) => {
     if (onSwitchToAskAI) {
-      onSwitchToAskAI("");
+      onSwitchToAskAI(question);
     }
   }
 
@@ -172,7 +165,7 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
             </p>
             {question.type === 'multiple_choice' && (
               <div className="space-y-2">
-                {shuffledOptions[index]?.map((option, optionIndex) => {
+                {shuffledOptions[index]?.map((option) => {
                   const isSelected = selectedAnswers[index] === option
                   const isCorrect = option === question.answer
                   const isLocked = questionLocked[index]
