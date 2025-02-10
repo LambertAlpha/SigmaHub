@@ -9,13 +9,13 @@ interface Message {
   id: number
   text: string
   isAi: boolean
-  timestamp?: "20250210021255"
+  timestamp?: string
 }
 
 interface AskAIViewProps {
   initialQuestion?: string;
   messages: Message[];
-  setMessages: (messages: Message[]) => void;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
 export function AskAIView({ initialQuestion = "", messages, setMessages }: AskAIViewProps) {
@@ -53,7 +53,7 @@ export function AskAIView({ initialQuestion = "", messages, setMessages }: AskAI
       wsConnection.onmessage = (event: MessageEvent) => {
         const text = event.data
         console.log('收到服务器消息:', text)
-        setMessages(prev => {
+        setMessages((prev: Message[]) => {
           const lastMessage = prev[prev.length - 1]
           
           if (lastMessage && lastMessage.isAi) {
