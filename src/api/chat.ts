@@ -34,6 +34,7 @@ export function sendMessage(ws: WebSocket, message: string) {
     const messageData = {
       text: message
     }
+    console.log('Sending message:', messageData)
     ws.send(JSON.stringify(messageData))
   } else {
     console.error('WebSocket is not connected')

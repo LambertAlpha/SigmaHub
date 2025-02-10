@@ -77,14 +77,26 @@ export const uploadVideo = async (url: string): Promise<ApiResponse<UploadVideoD
 
 // 2. 获取问题接口
 interface QuestionData {
-  questions: Array<{
-    id: number;
-    question: string;
-    options: Array<{
-      label: string;
-      text: string;
-    }>;
-  }>;
+  basic_resp: {
+    msg: string;
+  };
+  problem_info: {
+    exercises: {
+      multiple_choice: Array<{
+        question: string;
+        options: string[];
+        answer: string;
+        explanations: Array<{
+          option: string;
+          explanation: string;
+        }>;
+        time_range: {
+          start_time: number;
+          end_time: number;
+        };
+      }>;
+    };
+  };
 }
 export const getQuestions = async (prefix: string): Promise<ApiResponse<QuestionData>> => {
   const params: QuestionParams = { prefix };

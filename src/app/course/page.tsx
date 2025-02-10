@@ -10,16 +10,26 @@ import { SummaryView } from "@/app/components/summary-view"
 import { AskAIView } from "@/app/components/ask-ai-view"
 import { uploadVideo, uploadVideoFile } from "@/api/index"
 
+// 添加 Message 接口定义
+interface Message {
+  id: number
+  text: string
+  isAi: boolean
+  timestamp?: string
+}
+
 type View = "practice" | "summary" | "askAi"
 
 export default function CoursePage() {
   const [mounted, setMounted] = useState(false)
   const [currentView, setCurrentView] = useState<View>("practice")
+  const [currentQuestion, setCurrentQuestion] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [timestamp, setTimestamp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [messages, setMessages] = useState<Message[]>([])
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -60,6 +70,11 @@ export default function CoursePage() {
     }
   }
 
+  const handleSwitchToAskAI = (question: string) => {
+    setCurrentQuestion(question);
+    setCurrentView("askAi");
+  }
+
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -76,37 +91,55 @@ export default function CoursePage() {
     return null
   }
 
-  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250210021255");
+  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250211010931 ");
 
   return (
-    <div suppressHydrationWarning className="min-h-screen bg-gray-900 text-gray-100">
+    <div suppressHydrationWarning className="min-h-screen bg-white text-gray-800">
       {/* Header */}
-      <div className="p-4 border-b border-gray-800">
+      <div className="p-4 bg-gray-50">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-transparent bg-transparent">
                 <ArrowLeft className="h-6 w-6" />
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">
-              Course Name: <span className="text-blue-500">心理学与生活</span>
+              Course Name: <span className="text-blue-600">Default</span>
             </h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-4">
             <Button
-              variant={currentView === "practice" ? "default" : "secondary"}
+              variant="ghost"
               onClick={() => setCurrentView("practice")}
+              className={`px-4 py-2 transition-all hover:bg-transparent bg-transparent ${
+                currentView === "practice" 
+                ? "text-blue-600 border-b-2 border-blue-600" 
+                : "text-gray-500 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
+              }`}
             >
               Practice
             </Button>
             <Button
-              variant={currentView === "summary" ? "default" : "secondary"}
+              variant="ghost"
               onClick={() => setCurrentView("summary")}
+              className={`px-4 py-2 transition-all hover:bg-transparent bg-transparent ${
+                currentView === "summary" 
+                ? "text-blue-600 border-b-2 border-blue-600" 
+                : "text-gray-500 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
+              }`}
             >
               Summary
             </Button>
-            <Button variant={currentView === "askAi" ? "default" : "secondary"} onClick={() => setCurrentView("askAi")}>
+            <Button
+              variant="ghost"
+              onClick={() => setCurrentView("askAi")}
+              className={`px-4 py-2 transition-all hover:bg-transparent bg-transparent ${
+                currentView === "askAi" 
+                ? "text-blue-600 border-b-2 border-blue-600" 
+                : "text-gray-500 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
+              }`}
+            >
               Ask AI
             </Button>
           </div>
@@ -119,10 +152,10 @@ export default function CoursePage() {
           {/* File Drop Zone / Video Player Container */}
           <div
             className={`
-              border-2 border-dashed rounded-lg
+              rounded-3xl
               flex flex-col items-center justify-center
               min-h-[400px] transition-colors
-              ${isDragging ? "border-blue-500 bg-blue-500/10" : "border-gray-700"}
+              ${isDragging ? "bg-blue-50" : "bg-gray-100"}
               ${isUploading ? "opacity-50" : ""}
             `}
             onDragOver={handleDragOver}
@@ -130,7 +163,7 @@ export default function CoursePage() {
             onDrop={handleDrop}
           >
             {isUploading ? (
-              <div className="text-gray-400">Uploading...</div>
+              <div className="text-gray-600">Uploading...</div>
             ) : videoUrl ? (
               // 视频播放器
               <div className="w-full h-full">
@@ -161,33 +194,44 @@ export default function CoursePage() {
                     />
                   </svg>
                 </div>
-                <p className="text-lg text-gray-400">将视频文件拖放到这里</p>
+                <p className="text-lg text-gray-600">将视频文件拖放到这里</p>
                 <p className="text-sm text-gray-500 mt-2">支持 MP4, WebM, Ogg 格式</p>
               </>
             )}
           </div>
 
           {error && (
-            <div className="bg-red-500/10 text-red-400 px-4 py-2 rounded">
+            <div className="text-red-600 px-4 py-2">
               {error}
             </div>
           )}
 
           {timestamp && (
-            <div className="bg-green-500/10 text-green-400 px-4 py-2 rounded">
+            <div className="text-green-600 px-4 py-2">
               Video uploaded successfully!
             </div>
           )}
 
           {/* Notes Area */}
-          <Textarea placeholder="Type your notes here..." className="min-h-[200px] bg-gray-800 border-gray-700" />
+          <Textarea placeholder="Type your notes here..." className="min-h-[200px] bg-gray-100 rounded-3xl" />
         </div>
 
         {/* Right Panel */}
-        <div className="bg-gray-800 rounded-lg">
-          {currentView === "practice" && <PracticeView timestamp="20250210021255" />}
-          {currentView === "summary" && <SummaryView timestamp="20250210021255" />}
-          {currentView === "askAi" && <AskAIView />}
+        <div className="bg-gray-100 rounded-3xl">
+          {currentView === "practice" && (
+            <PracticeView 
+              timestamp="20250211010931" 
+              onSwitchToAskAI={handleSwitchToAskAI}
+            />
+          )}
+          {currentView === "summary" && <SummaryView timestamp="20250211010931" />}
+          {currentView === "askAi" && (
+            <AskAIView 
+              initialQuestion={currentQuestion}
+              messages={messages}
+              setMessages={setMessages}
+            />
+          )}
         </div>
       </div>
     </div>

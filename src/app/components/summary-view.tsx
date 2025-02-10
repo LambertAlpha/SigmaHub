@@ -9,7 +9,7 @@ interface Summary {
 }
 
 interface SummaryViewProps {
-  timestamp: "20250210021255"
+  timestamp: string
 }
 
 export function SummaryView({ timestamp }: SummaryViewProps) {
@@ -31,6 +31,7 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
         setError(null);
         console.log('开始请求摘要数据...');
         const response = await getSummary(timestamp);
+        console.log(response);
         console.log('API 响应数据:', response);
 
         if (!response) {
@@ -103,13 +104,13 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
   if (!summary) return null
 
   return (
-    <div className="p-4 space-y-6 text-white">
+    <div className="p-4 space-y-6 text-gray-800">
       {loading && (
-        <div className="text-blue-400">加载中...</div>
+        <div className="text-blue-600">加载中...</div>
       )}
       
       {error && (
-        <div className="text-red-500">错误: {error}</div>
+        <div className="text-red-600">错误: {error}</div>
       )}
 
       {!loading && !error && chapters.length > 0 && (
@@ -122,7 +123,15 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
               {Array.from(new Set(chapters.flatMap(chapter => chapter.keywords))).map((keyword, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-gray-700 rounded-full text-base"
+                  className={`px-4 py-2 rounded-full text-base ${
+                    index % 4 === 0 
+                      ? "bg-blue-100 text-gray-800" 
+                      : index % 3 === 1 
+                        ? "bg-purple-100 text-gray-800"
+                        : index % 2 === 0
+                          ? "bg-indigo-100 text-gray-800"
+                          : "bg-blue-100 text-gray-800"
+                  }`}
                 >
                   {keyword}
                 </span>
@@ -138,8 +147,8 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
                 <div key={index} className="ml-4 space-y-2">
                   <h3 className="text-lg">• {chapter.title}</h3>
                   <div className="ml-6 space-y-2">
-                    <p className="text-gray-300">• {chapter.summary}</p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-600">• {chapter.summary}</p>
+                    <p className="text-gray-500 text-sm">
                       {Math.floor(chapter.start_time)}s - {Math.floor(chapter.end_time)}s
                     </p>
                   </div>
@@ -151,7 +160,7 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
       )}
 
       {!loading && !error && chapters.length === 0 && (
-        <div className="text-yellow-500">暂无章节数据</div>
+        <div className="text-yellow-600">暂无章节数据</div>
       )}
     </div>
   )

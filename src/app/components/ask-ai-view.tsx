@@ -12,13 +12,24 @@ interface Message {
   timestamp?: "20250210021255"
 }
 
-export function AskAIView() {
-  const [messages, setMessages] = useState<Message[]>([])
+interface AskAIViewProps {
+  initialQuestion?: string;
+  messages: Message[];
+  setMessages: (messages: Message[]) => void;
+}
+
+export function AskAIView({ initialQuestion = "", messages, setMessages }: AskAIViewProps) {
   const [input, setInput] = useState("")
+  const [hasInitialQuestionSent, setHasInitialQuestionSent] = useState(false)
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [isConnecting, setIsConnecting] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [timestamp, setTimestamp] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (initialQuestion) {
+      setInput(initialQuestion)
+    }
+  }, [])
 
   useEffect(() => {
     let wsConnection: WebSocket | null = null
@@ -28,17 +39,20 @@ export function AskAIView() {
       wsConnection = createChatConnection()
       
       wsConnection.onopen = () => {
+        console.log('WebSocket连接已建立')
         setIsConnecting(false)
-        setMessages([{
-          id: 1,
-          text: "我是你的视频小助手，有什么需要帮助的吗？",
-          isAi: true,
-          // timestamp: timestamp,
-        }])
+        if (messages.length === 0) {
+          setMessages([{
+            id: 1,
+            text: "我是你的视频小助手，有什么需要帮助的吗？",
+            isAi: true,
+          }])
+        }
       }
 
       wsConnection.onmessage = (event: MessageEvent) => {
         const text = event.data
+        console.log('收到服务器消息:', text)
         setMessages(prev => {
           const lastMessage = prev[prev.length - 1]
           
@@ -56,21 +70,9 @@ export function AskAIView() {
             id: prev.length + 1,
             text: text,
             isAi: true,
-            // timestamp: timestamp,
           }]
         })
       }
-
-      // wsConnection.onerror = (event) => {
-      //   // console.error('WebSocket error:', event)
-      //   setError('Connection error occurred')
-      //   setIsConnecting(false)
-      // }
-
-      // wsConnection.onclose = () => {
-      //   setError('Connection closed')
-      //   setIsConnecting(false)
-      // }
 
       setWs(wsConnection)
     } catch (err) {
@@ -84,7 +86,31 @@ export function AskAIView() {
         wsConnection.close()
       }
     }
-  }, [timestamp])
+  }, [setMessages])
+
+  useEffect(() => {
+    if (initialQuestion && !hasInitialQuestionSent && ws?.readyState === WebSocket.OPEN) {
+      setMessages((prev: Message[]) => [...prev, {
+        id: Date.now(),
+        text: initialQuestion,
+        isAi: false,
+        timestamp: new Date().toISOString()
+      }])
+
+      try {
+        sendMessage(ws, initialQuestion)
+        setInput("")
+        setHasInitialQuestionSent(true)
+      } catch (err) {
+        console.error('Failed to send message:', err)
+        setError('Failed to send message')
+      }
+    }
+  }, [initialQuestion, ws, setMessages, hasInitialQuestionSent])
+
+  useEffect(() => {
+    setHasInitialQuestionSent(false)
+  }, [initialQuestion])
 
   const handleSend = () => {
     if (!input.trim() || !ws || ws.readyState !== WebSocket.OPEN) {
@@ -96,7 +122,6 @@ export function AskAIView() {
       id: prev.length + 1,
       text: input,
       isAi: false,
-      // timestamp: timestamp,
     }])
 
     try {
@@ -124,10 +149,10 @@ export function AskAIView() {
   }
 
   return (
-    <div suppressHydrationWarning className="h-[calc(100vh-16rem)] overflow-y-auto">
+    <div suppressHydrationWarning className="h-[calc(100vh-16rem)] overflow-y-auto bg-gray-50 rounded-3xl">
       <div className="flex h-full flex-col">
         {error && (
-          <div className="bg-red-500/10 text-red-400 px-4 py-2 text-sm">
+          <div className="bg-red-50 text-red-600 px-4 py-2 text-sm">
             {error}
           </div>
         )}
@@ -135,8 +160,10 @@ export function AskAIView() {
           {messages.map((message) => (
             <div key={message.id} className={`flex ${message.isAi ? "justify-start" : "justify-end"}`}>
               <div
-                className={`rounded-lg px-4 py-2 max-w-[80%] ${
-                  message.isAi ? "bg-gray-700 text-gray-100" : "bg-blue-600 text-white"
+                className={`rounded-2xl px-4 py-2 max-w-[80%] ${
+                  message.isAi 
+                  ? "bg-blue-100 text-gray-800 rounded-tl-none" 
+                  : "bg-blue-100 text-gray-800 rounded-tr-none"
                 }`}
               >
                 {message.text}
@@ -144,20 +171,24 @@ export function AskAIView() {
             </div>
           ))}
         </div>
-        <div className="border-t border-gray-700 p-4">
+        <div className="p-4">
           <div className="flex gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="有什么想问的?"
-              className="flex-1"
-              disabled={!ws || ws.readyState !== WebSocket.OPEN}
-            />
+            <div className="flex-1 relative">
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                ?
+              </div>
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask Me Anything"
+                className="w-full pl-10 pr-4 py-3 bg-white border-0 rounded-full text-gray-800 placeholder-gray-400"
+              />
+            </div>
             <Button 
               onClick={handleSend}
               disabled={!ws || ws.readyState !== WebSocket.OPEN}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6"
             >
               发送
             </Button>
