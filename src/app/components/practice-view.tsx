@@ -29,6 +29,16 @@ interface PracticeViewProps {
   onSwitchToAskAI?: (question: string) => void;  // 添加新的 prop
 }
 
+// 添加一个洗牌函数
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
 export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(false)
@@ -37,6 +47,11 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
   const [answerResults, setAnswerResults] = useState<{[key: number]: boolean}>({})
   const [questionLocked, setQuestionLocked] = useState<{[key: number]: boolean}>({})  // 新增：记录题目是否已锁定
   const [showExplanation, setShowExplanation] = useState<{[key: number]: boolean}>({})  // 新增：控制解释框的显示
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+  
+  // 为每个问题生成一个打乱的选项数组
+  const [shuffledOptions, setShuffledOptions] = useState<string[][]>([])
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -77,6 +92,14 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
     // 只在组件挂载时请求一次
     fetchQuestions()
   }, [timestamp])
+
+  // 在组件加载时，为所有问题生成打乱的选项
+  useEffect(() => {
+    const shuffled = questions.map(question => 
+      shuffleArray(question.options)
+    )
+    setShuffledOptions(shuffled)
+  }, [questions])
 
   const handleOptionSelect = (questionIndex: number, option: string) => {
     if (questionLocked[questionIndex]) {
@@ -149,7 +172,7 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
             </p>
             {question.type === 'multiple_choice' && (
               <div className="space-y-2">
-                {question.options?.map(option => {
+                {shuffledOptions[index]?.map((option, optionIndex) => {
                   const isSelected = selectedAnswers[index] === option
                   const isCorrect = option === question.answer
                   const isLocked = questionLocked[index]
