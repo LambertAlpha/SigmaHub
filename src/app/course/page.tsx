@@ -50,10 +50,10 @@ export default function CoursePage() {
       setIsUploading(true)
       setError(null)
       const response = await uploadVideoFile(file)
-      setTimestamp(response.data.timestamp)
+      // setTimestamp(response.data.timestamp)
       // setTimestamp("20250208163707")
     } catch (err) {
-      setError('Failed to upload video')
+      //setError('Failed to upload video')
       console.error(err)
     } finally {
       setIsUploading(false)
@@ -76,7 +76,7 @@ export default function CoursePage() {
     return null
   }
 
-  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250208163707");
+  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250210021255");
 
   return (
     <div suppressHydrationWarning className="min-h-screen bg-gray-900 text-gray-100">
@@ -90,7 +90,7 @@ export default function CoursePage() {
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">
-              Course Name: <span className="text-blue-500">Default</span>
+              Course Name: <span className="text-blue-500">心理学与生活</span>
             </h1>
           </div>
           <div className="flex gap-2">
@@ -185,8 +185,8 @@ export default function CoursePage() {
 
         {/* Right Panel */}
         <div className="bg-gray-800 rounded-lg">
-          {currentView === "practice" && <PracticeView timestamp="20250208163707" />}
-          {currentView === "summary" && <SummaryView timestamp="20250208163707" />}
+          {currentView === "practice" && <PracticeView timestamp="20250210021255" />}
+          {currentView === "summary" && <SummaryView timestamp="20250210021255" />}
           {currentView === "askAi" && <AskAIView />}
         </div>
       </div>

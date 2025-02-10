@@ -9,7 +9,7 @@ interface Message {
   id: number
   text: string
   isAi: boolean
-  timestamp?: "20250208163707"
+  timestamp?: "20250210021255"
 }
 
 export function AskAIView() {
@@ -31,7 +31,7 @@ export function AskAIView() {
         setIsConnecting(false)
         setMessages([{
           id: 1,
-          text: "Connected! How can I help you?",
+          text: "我是你的视频小助手，有什么需要帮助的吗？",
           isAi: true,
           // timestamp: timestamp,
         }])
@@ -61,16 +61,16 @@ export function AskAIView() {
         })
       }
 
-      wsConnection.onerror = (event) => {
-        // console.error('WebSocket error:', event)
-        setError('Connection error occurred')
-        setIsConnecting(false)
-      }
+      // wsConnection.onerror = (event) => {
+      //   // console.error('WebSocket error:', event)
+      //   setError('Connection error occurred')
+      //   setIsConnecting(false)
+      // }
 
-      wsConnection.onclose = () => {
-        setError('Connection closed')
-        setIsConnecting(false)
-      }
+      // wsConnection.onclose = () => {
+      //   setError('Connection closed')
+      //   setIsConnecting(false)
+      // }
 
       setWs(wsConnection)
     } catch (err) {

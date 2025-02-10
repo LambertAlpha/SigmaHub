@@ -31,6 +31,7 @@ export function PracticeView({ timestamp }: PracticeViewProps) {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({})  // 添加选中状态管理
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -72,6 +73,13 @@ export function PracticeView({ timestamp }: PracticeViewProps) {
     fetchQuestions()
   }, [timestamp])
 
+  const handleOptionSelect = (questionIndex: number, option: string) => {
+    setSelectedAnswers(prev => ({
+      ...prev,
+      [questionIndex]: option
+    }))
+  }
+
   if (!timestamp) {
     return (
       <div className="p-4 text-gray-400">
@@ -97,23 +105,31 @@ export function PracticeView({ timestamp }: PracticeViewProps) {
   }
 
   return (
-    <div className="h-[calc(100vh-16rem)] overflow-y-auto">
+    <div suppressHydrationWarning className="h-[calc(100vh-16rem)] overflow-y-auto">
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">练习题</h2>
         {questions.map((question, index) => (
           <div key={index} className="mb-6 p-4 bg-gray-800 rounded-lg">
-            <p className="mb-2">{question.question}</p>
+            <p className="mb-2">
+              <span className="font-bold mr-2">第 {index + 1} 题：</span>
+              {question.question}
+            </p>
             {question.type === 'multiple_choice' && (
               <div className="space-y-2">
                 {question.options?.map((option, optIndex) => (
-                  <div key={optIndex} className="flex items-center">
-                    <input
-                      type="radio"
-                      name={`question-${index}`}
-                      id={`q${index}-opt${optIndex}`}
-                      className="mr-2"
-                    />
-                    <label htmlFor={`q${index}-opt${optIndex}`}>{option}</label>
+                  <div 
+                    key={optIndex} 
+                    className="flex items-center p-4 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer"
+                    onClick={() => handleOptionSelect(index, option)}
+                  >
+                    <div className="flex items-center w-full cursor-pointer">
+                      <div className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center mr-3">
+                        {selectedAnswers[index] === option && (
+                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        )}
+                      </div>
+                      <span>{option}</span>
+                    </div>
                   </div>
                 ))}
               </div>

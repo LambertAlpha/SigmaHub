@@ -13,17 +13,17 @@ const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://45.207.211.184:34567/v1/s
 export function createChatConnection(): WebSocket {
   const ws = new WebSocket(WS_URL)
   
-  ws.onopen = () => {
-    console.log('WebSocket connected')
-  }
+  // ws.onopen = () => {
+  //   console.log('WebSocket connected')
+  // }
 
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error)
-  }
+  // ws.onerror = (error) => {
+  //   console.error('WebSocket error:', error)
+  // }
 
-  ws.onclose = () => {
-    console.log('WebSocket connection closed')
-  }
+  // ws.onclose = () => {
+  //   console.log('WebSocket connection closed')
+  // }
 
   return ws
 }
