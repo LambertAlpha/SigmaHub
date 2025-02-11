@@ -23,7 +23,7 @@ export default function Home() {
     { id: '2', title: '区块链与比特币', imageUrl: '/courses_images/course2.jpg' },
     { id: '3', title: '三分钟认识SCI', imageUrl: '/courses_images/course3.jpg' },
     { id: '4', title: '磁场的本质', imageUrl: '/courses_images/course4.jpg' },
-    { id: '5', title: '为什么要早睡', imageUrl: '/courses_images/course5.jpg' },
+    { id: '5', title: '个人工作流分享', imageUrl: '/courses_images/course5.jpg' },
     { id: '6', title: '创意写作', imageUrl: '/courses_images/course6.jpg' },
     { id: '7', title: '金融基础', imageUrl: '/courses_images/course7.jpg' },
     { id: '8', title: '区块链基础', imageUrl: '/courses_images/course8.jpg' },

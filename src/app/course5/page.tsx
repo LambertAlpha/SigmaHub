@@ -9,6 +9,7 @@ import { PracticeView } from "@/app/components/practice-view"
 import { SummaryView } from "@/app/components/summary-view"
 import { AskAIView } from "@/app/components/ask-ai-view"
 import { uploadVideo, uploadVideoFile } from "@/api/index"
+import { AllSummary } from "@/app/components/all-summary"
 
 // 添加 Message 接口定义
 interface Message {
@@ -105,7 +106,7 @@ export default function CoursePage() {
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">
-              Course Name: <span className="text-blue-600">为什么我们需要早睡</span>
+              Course Name: <span className="text-blue-600">个人工作流分享</span>
             </h1>
           </div>
           <div className="flex gap-4">
@@ -212,19 +213,16 @@ export default function CoursePage() {
             </div>
           )}
 
-          {/* Notes Area */}
-          <Textarea 
-            placeholder="Type your notes here..." 
-            className="min-h-[200px] bg-gray-100 rounded-3xl border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
-          />
+          {/* Replace Textarea with AllSummary */}
+          <AllSummary timestamp="20250211110540" />
         </div>
 
         {/* Right Panel */}
         <div className="bg-gray-100 rounded-3xl">
-          {currentView === "summary" && <SummaryView timestamp="20250211010931" />}
+          {currentView === "summary" && <SummaryView timestamp="20250211110540" />}
           {currentView === "practice" && (
             <PracticeView 
-              timestamp="20250211010931" 
+              timestamp="20250211110540" 
               onSwitchToAskAI={handleSwitchToAskAI}
             />
           )}

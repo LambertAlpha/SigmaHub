@@ -17,7 +17,7 @@ interface RequestConfig {
 
 // 创建请求配置
 const config: RequestConfig = {
-  baseURL: 'https://45.207.211.184:34567',
+  baseURL: 'http://45.207.211.184:34567',
   timeout: 500000,
   headers: {
     'Content-Type': 'application/json'
@@ -149,5 +149,22 @@ export const uploadVideoFile = async (file: File): Promise<ApiResponse<UploadFil
       'Content-Type': 'multipart/form-data'
     },
     data: formData
+  });
+};
+
+// AllSummary 接口的数据类型定义
+interface AllSummaryData {
+  basic_resp: {
+    msg: string;
+  };
+  summary: string;
+}
+
+// 获取总体摘要接口
+export const getAllSummary = async (prefix: string): Promise<AllSummaryData> => {
+  return request({
+    url: '/v1/video/allSummary',
+    method: 'POST',
+    data: { prefix }
   });
 };

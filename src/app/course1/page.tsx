@@ -9,6 +9,7 @@ import { PracticeView } from "@/app/components/practice-view"
 import { SummaryView } from "@/app/components/summary-view"
 import { AskAIView } from "@/app/components/ask-ai-view"
 import { uploadVideo, uploadVideoFile } from "@/api/index"
+import { AllSummary } from "@/app/components/all-summary"
 
 // 添加 Message 接口定义
 interface Message {
@@ -60,11 +61,11 @@ export default function CoursePage() {
       setIsUploading(true)
       setError(null)
       const response = await uploadVideoFile(file)
-      // setTimestamp(response.data.timestamp)
-      // setTimestamp("20250208163707")
+      console.log("Upload response:", response);
+      setTimestamp(response.data.timestamp)
     } catch (err) {
-      //setError('Failed to upload video')
-      console.error(err)
+      setError('上传视频失败，请重试')
+      console.error("Upload error:", err)
     } finally {
       setIsUploading(false)
     }
@@ -91,7 +92,7 @@ export default function CoursePage() {
     return null
   }
 
-  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250211010931 ");
+  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250211010931");
 
   return (
     <div suppressHydrationWarning className="min-h-screen bg-white text-gray-800">
@@ -212,11 +213,8 @@ export default function CoursePage() {
             </div>
           )}
 
-          {/* Notes Area */}
-          <Textarea 
-            placeholder="Type your notes here..." 
-            className="min-h-[200px] bg-gray-100 rounded-3xl border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
-          />
+          {/* Replace Textarea with AllSummary */}
+          <AllSummary timestamp="20250211010931" />
         </div>
 
         {/* Right Panel */}
