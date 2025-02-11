@@ -219,7 +219,7 @@ export default function CoursePage() {
 
         {/* Right Panel */}
         <div className="bg-gray-100 rounded-3xl h-full overflow-hidden">
-          {currentView === "summary" && <SummaryView timestamp="20250211012739" />}
+          {currentView === "summary" && <SummaryView timestamp="20250211094715" />}
           {currentView === "practice" && (
             <PracticeView 
               timestamp="20250211094715" 
