@@ -48,7 +48,16 @@ export function AllSummary({ timestamp }: AllSummaryProps) {
   if (loading) {
     return (
       <div className="p-4 text-center">
-        <div className="animate-pulse">loading...</div>
+        <div className="animate-pulse space-y-4">
+          <div>loading...</div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+          <div className="h-4 bg-gray-100 rounded"></div>
+        </div>
       </div>
     );
   }
