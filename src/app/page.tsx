@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Plus } from "lucide-react"
+import { Plus, Code2, Database, GraduationCap, Boxes, Brain, Bitcoin, Layout } from "lucide-react"
 import ActivityHeatmap from "./components/activity-heatmap"
 import { RankingDialog } from "@/components/ranking-dialog"
 import { useState } from "react"
@@ -52,10 +52,18 @@ export default function Home() {
               </div>
               <h1 className="text-2xl font-bold text-gray-900">Weston Guo</h1>
               <div className="grid grid-cols-2 gap-2 w-full max-w-[280px]">
-                {Array(7).fill('Best Learner Ever').map((badge, index) => (
+                {[
+                  { text: 'Full-Stack Dev', icon: Code2 },
+                  { text: 'Data Science', icon: Database },
+                  { text: 'UCB Alumni', icon: GraduationCap },
+                  { text: 'Web3 Builder', icon: Boxes },
+                  { text: 'AI Engineer', icon: Brain },
+                  { text: 'Blockchain Dev', icon: Bitcoin },
+                  { text: 'System Design', icon: Layout }
+                ].map(({ text, icon: Icon }, index) => (
                   <span 
                     key={index}
-                    className={`px-3 py-1.5 rounded-full text-xs text-center ${
+                    className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-1 ${
                       [0, 3, 5].includes(index)
                         ? "bg-[#00BFB3] text-white" 
                         : [1, 4].includes(index)
@@ -63,7 +71,8 @@ export default function Home() {
                         : "bg-[#34D399] text-white"
                     }`}
                   >
-                    {badge}
+                    <Icon className="w-3 h-3" />
+                    {text}
                   </span>
                 ))}
               </div>

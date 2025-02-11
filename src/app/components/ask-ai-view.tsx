@@ -162,7 +162,7 @@ export function AskAIView({ initialQuestion = "", messages, setMessages }: AskAI
               <div
                 className={`rounded-2xl px-4 py-2 max-w-[80%] ${
                   message.isAi 
-                  ? "bg-blue-100 text-gray-800 rounded-tl-none" 
+                  ? "bg-blue-200 text-gray-800 rounded-tl-none" 
                   : "bg-blue-100 text-gray-800 rounded-tr-none"
                 }`}
               >
