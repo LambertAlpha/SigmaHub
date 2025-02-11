@@ -92,9 +92,12 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
 
   // 在组件加载时，为所有问题生成打乱的选项
   useEffect(() => {
-    const shuffled = questions.map(question => 
-      question.options ? shuffleArray(question.options) : []
-    )
+    const shuffled = questions.map(question => {
+      if (Array.isArray(question.options) && question.options.length > 0) {
+        return shuffleArray(question.options)
+      }
+      return []
+    })
     setShuffledOptions(shuffled)
   }, [questions])
 
