@@ -95,7 +95,7 @@ export default function CoursePage() {
   console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250211010931");
 
   return (
-    <div suppressHydrationWarning className="min-h-screen bg-white text-gray-800">
+    <div suppressHydrationWarning className="h-screen bg-white text-gray-800">
       {/* Header */}
       <div className="p-4 bg-gray-50">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -148,8 +148,8 @@ export default function CoursePage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-        <div className="space-y-4">
+      <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 h-[calc(100vh-80px)]">
+        <div className="space-y-4 overflow-y-auto">
           {/* File Drop Zone / Video Player Container */}
           <div
             className={`
@@ -218,7 +218,7 @@ export default function CoursePage() {
         </div>
 
         {/* Right Panel */}
-        <div className="bg-gray-100 rounded-3xl">
+        <div className="bg-gray-100 rounded-3xl h-full overflow-hidden">
           {currentView === "summary" && <SummaryView timestamp="20250211010931" />}
           {currentView === "practice" && (
             <PracticeView 

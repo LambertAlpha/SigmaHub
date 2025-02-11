@@ -149,7 +149,7 @@ export function AskAIView({ initialQuestion = "", messages, setMessages }: AskAI
   }
 
   return (
-    <div suppressHydrationWarning className="h-[calc(100vh-16rem)] overflow-y-auto bg-gray-50 rounded-3xl">
+    <div suppressHydrationWarning className="h-full overflow-y-auto bg-gray-50 rounded-3xl">
       <div className="flex h-full flex-col">
         {error && (
           <div className="bg-red-50 text-red-600 px-4 py-2 text-sm">

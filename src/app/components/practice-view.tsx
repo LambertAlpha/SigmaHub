@@ -157,7 +157,7 @@ export function PracticeView({ timestamp, onSwitchToAskAI }: PracticeViewProps) 
   }
 
   return (
-    <div suppressHydrationWarning className="h-[calc(100vh-16rem)] overflow-y-auto">
+    <div suppressHydrationWarning className="h-full overflow-y-auto">
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">练习题</h2>
         {questions.map((question, index) => (

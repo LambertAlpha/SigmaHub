@@ -104,64 +104,66 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
   if (!summary) return null
 
   return (
-    <div className="p-4 space-y-6 text-gray-800">
-      {loading && (
-        <div className="text-blue-600">loading...</div>
-      )}
-      
-      {error && (
-        <div className="text-red-600">错误: {error}</div>
-      )}
+    <div className="h-full overflow-y-auto">
+      <div className="p-4 space-y-6 text-gray-800">
+        {loading && (
+          <div className="text-blue-600">loading...</div>
+        )}
+        
+        {error && (
+          <div className="text-red-600">错误: {error}</div>
+        )}
 
-      {!loading && !error && chapters.length > 0 && (
-        <div className="h-[calc(100vh-16rem)] overflow-y-auto">
-          {/* Keywords Section */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">Keywords in the video:</h2>
-            <div className="flex flex-wrap gap-2">
-              {/* 收集所有章节的关键词并去重 */}
-              {Array.from(new Set(chapters.flatMap(chapter => chapter.keywords))).map((keyword, index) => (
-                <span
-                  key={index}
-                  className={`px-4 py-2 rounded-full text-base ${
-                    index % 4 === 0 
-                      ? "bg-blue-100 text-gray-800" 
-                      : index % 3 === 1 
-                        ? "bg-purple-100 text-gray-800"
-                        : index % 2 === 0
-                          ? "bg-indigo-100 text-gray-800"
-                          : "bg-blue-100 text-gray-800"
-                  }`}
-                >
-                  {keyword}
-                </span>
-              ))}
+        {!loading && !error && chapters.length > 0 && (
+          <>
+            {/* Keywords Section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-4">Keywords in the video:</h2>
+              <div className="flex flex-wrap gap-2">
+                {/* 收集所有章节的关键词并去重 */}
+                {Array.from(new Set(chapters.flatMap(chapter => chapter.keywords))).map((keyword, index) => (
+                  <span
+                    key={index}
+                    className={`px-4 py-2 rounded-full text-base ${
+                      index % 4 === 0 
+                        ? "bg-blue-100 text-gray-800" 
+                        : index % 3 === 1 
+                          ? "bg-purple-100 text-gray-800"
+                          : index % 2 === 0
+                            ? "bg-indigo-100 text-gray-800"
+                            : "bg-blue-100 text-gray-800"
+                    }`}
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Summary Section */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Summary:</h2>
-            <div className="space-y-4">
-              {chapters.map((chapter, index) => (
-                <div key={index} className="ml-4 space-y-2">
-                  <h3 className="text-lg">• {chapter.title}</h3>
-                  <div className="ml-6 space-y-2">
-                    <p className="text-gray-600">• {chapter.summary}</p>
-                    <p className="text-gray-500 text-sm">
-                      {Math.floor(chapter.start_time)}s - {Math.floor(chapter.end_time)}s
-                    </p>
+            {/* Summary Section */}
+            <div>
+              <h2 className="text-xl font-bold mb-4">Summary:</h2>
+              <div className="space-y-4">
+                {chapters.map((chapter, index) => (
+                  <div key={index} className="ml-4 space-y-2">
+                    <h3 className="text-lg">• {chapter.title}</h3>
+                    <div className="ml-6 space-y-2">
+                      <p className="text-gray-600">• {chapter.summary}</p>
+                      <p className="text-gray-500 text-sm">
+                        {Math.floor(chapter.start_time)}s - {Math.floor(chapter.end_time)}s
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
 
-      {!loading && !error && chapters.length === 0 && (
-        <div className="text-yellow-600">暂无章节数据</div>
-      )}
+        {!loading && !error && chapters.length === 0 && (
+          <div className="text-yellow-600">暂无章节数据</div>
+        )}
+      </div>
     </div>
   )
 }  
