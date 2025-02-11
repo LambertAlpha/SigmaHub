@@ -17,7 +17,7 @@ interface RequestConfig {
 
 // 创建请求配置
 const config: RequestConfig = {
-  baseURL: 'http://45.207.211.184:34567',
+  baseURL: 'https://45.207.211.184:34567',
   timeout: 500000,
   headers: {
     'Content-Type': 'application/json'
