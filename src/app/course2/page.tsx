@@ -119,7 +119,7 @@ export default function CoursePage() {
                 : "text-gray-500 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
               }`}
             >
-              Summary
+              Keywords
             </Button>
             <Button
               variant="ghost"

@@ -106,7 +106,7 @@ export function SummaryView({ timestamp }: SummaryViewProps) {
   return (
     <div className="p-4 space-y-6 text-gray-800">
       {loading && (
-        <div className="text-blue-600">加载中...</div>
+        <div className="text-blue-600">loading...</div>
       )}
       
       {error && (

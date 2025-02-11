@@ -48,7 +48,7 @@ export function AllSummary({ timestamp }: AllSummaryProps) {
   if (loading) {
     return (
       <div className="p-4 text-center">
-        <div className="animate-pulse">加载中...</div>
+        <div className="animate-pulse">loading...</div>
       </div>
     );
   }

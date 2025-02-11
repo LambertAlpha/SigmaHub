@@ -9,6 +9,7 @@ import { PracticeView } from "@/app/components/practice-view"
 import { SummaryView } from "@/app/components/summary-view"
 import { AskAIView } from "@/app/components/ask-ai-view"
 import { uploadVideo, uploadVideoFile } from "@/api/index"
+import { AllSummary } from "@/app/components/all-summary"
 
 // 添加 Message 接口定义
 interface Message {
@@ -22,13 +23,13 @@ type View = "practice" | "summary" | "askAi"
 
 export default function CoursePage() {
   const [mounted, setMounted] = useState(false)
-  const [currentView, setCurrentView] = useState<View>("practice")
+  const [currentView, setCurrentView] = useState<View>("summary")
   const [currentQuestion, setCurrentQuestion] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [timestamp, setTimestamp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [videoUrl, setVideoUrl] = useState<string>("")
   const [messages, setMessages] = useState<Message[]>([])
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -49,22 +50,21 @@ export default function CoursePage() {
     
     const file = files[0]
     if (!file.type.startsWith('video/')) {
-      setError('Please upload a video file')
+      setError('请上传视频文件')
       return
     }
 
-      // 创建本地视频URL
     setVideoUrl(URL.createObjectURL(file))
 
     try {
       setIsUploading(true)
       setError(null)
       const response = await uploadVideoFile(file)
-      // setTimestamp(response.data.timestamp)
-      // setTimestamp("20250208163707")
+      console.log("Upload response:", response);
+      setTimestamp(response.data.timestamp)
     } catch (err) {
-      //setError('Failed to upload video')
-      console.error(err)
+      setError('上传视频失败，请重试')
+      console.error("Upload error:", err)
     } finally {
       setIsUploading(false)
     }
@@ -91,8 +91,6 @@ export default function CoursePage() {
     return null
   }
 
-  console.log('传递给 SummaryView 的 timestamp:', timestamp || "20250211010931 ");
-
   return (
     <div suppressHydrationWarning className="min-h-screen bg-white text-gray-800">
       {/* Header */}
@@ -105,10 +103,21 @@ export default function CoursePage() {
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">
-              Course Name: <span className="text-blue-600">Default</span>
+              Default
             </h1>
           </div>
           <div className="flex gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => setCurrentView("summary")}
+              className={`px-4 py-2 transition-all hover:bg-transparent bg-transparent ${
+                currentView === "summary" 
+                ? "text-blue-600 border-b-2 border-blue-600" 
+                : "text-gray-500 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
+              }`}
+            >
+              Keywords
+            </Button>
             <Button
               variant="ghost"
               onClick={() => setCurrentView("practice")}
@@ -119,17 +128,6 @@ export default function CoursePage() {
               }`}
             >
               Practice
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setCurrentView("summary")}
-              className={`px-4 py-2 transition-all hover:bg-transparent bg-transparent ${
-                currentView === "summary" 
-                ? "text-blue-600 border-b-2 border-blue-600" 
-                : "text-gray-500 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
-              }`}
-            >
-              Summary
             </Button>
             <Button
               variant="ghost"
@@ -163,7 +161,7 @@ export default function CoursePage() {
             onDrop={handleDrop}
           >
             {isUploading ? (
-              <div className="text-gray-600">Uploading...</div>
+              <div className="text-gray-600">上传中...</div>
             ) : videoUrl ? (
               // 视频播放器
               <div className="w-full h-full">
@@ -208,23 +206,23 @@ export default function CoursePage() {
 
           {timestamp && (
             <div className="text-green-600 px-4 py-2">
-              Video uploaded successfully!
+              视频上传成功！
             </div>
           )}
 
-          {/* Notes Area */}
-          <Textarea placeholder="Type your notes here..." className="min-h-[200px] bg-gray-100 rounded-3xl" />
+          {/* Replace Textarea with AllSummary */}
+          <AllSummary timestamp={timestamp || ""} />
         </div>
 
         {/* Right Panel */}
         <div className="bg-gray-100 rounded-3xl">
+          {currentView === "summary" && <SummaryView timestamp={timestamp || ""} />}
           {currentView === "practice" && (
             <PracticeView 
-              timestamp="20250211010931" 
+              timestamp={timestamp || ""} 
               onSwitchToAskAI={handleSwitchToAskAI}
             />
           )}
-          {currentView === "summary" && <SummaryView timestamp="20250211010931" />}
           {currentView === "askAi" && (
             <AskAIView 
               initialQuestion={currentQuestion}
